@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Ice Cream E-commerce API
 
 Project backend e-commerce fullstack cho website ban hang kem, da trien khai day du cac nhom tinh nang theo 5 giai doan.
@@ -89,3 +90,6 @@ docker run -p 4000:4000 --env-file .env ice-cream-api
 - Stripe: set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 - VNPay: set `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET`
 - Momo: set `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY`
+=======
+# kem-y-suong
+>>>>>>> fa5c8e4310c85e07eaa5c9b35ee6f1c391bc2b80
