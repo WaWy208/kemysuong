@@ -1,0 +1,22 @@
+
+> kem-y-suong-api@1.1.0 start
+> node src/server.js
+
+MongoDB connection failed (attempt 1/2): connect ECONNREFUSED 127.0.0.1:27017
+MongoDB connection failed (attempt 2/2): connect ECONNREFUSED 127.0.0.1:27017
+[db] Falling back to in-memory MongoDB because primary connection failed.
+[db] Using in-memory MongoDB at mongodb://127.0.0.1:60862/
+MongoDB connected (in-memory fallback)
+Uncaught Exception: Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+    at listenInCluster (node:net:2005:12)
+    at Server.listen (node:net:2110:7)
+    at app.listen (C:\Users\admin\Documents\ice_cream\node_modules\express\lib\application.js:635:24)
+    at bootstrap (C:\Users\admin\Documents\ice_cream\src\server.js:9:22)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}

@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>KEM Ý SƯƠNG | Kem ngon — đặt nhanh</title>
+  <meta name="description" content="Kem Ý Sương: menu signature, giá dễ thương, đặt nhanh trong 30 giây. Giao tận nơi hoặc nhận tại quầy." />
+  <meta name="theme-color" content="#ff6a00" />
+  <meta property="og:title" content="KEM Ý SƯƠNG | Kem ngon — đặt nhanh" />
+  <meta property="og:description" content="Menu signature, giá dễ thương, đặt nhanh trong 30 giây." />
+  <meta property="og:image" content="https://kemysuong.vercel.app/img/og-kem-y-suong.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta name="robots" content="index,follow" />
+  <meta name="app-base-url" content="http://localhost:4000" />
+  <meta name="api-base-url" content="http://localhost:4000" />
+  <link rel="canonical" href="https://kemysuong.vercel.app/" />
+  <link rel="preload" as="image" href="img/socolagiontan.jpg" imagesrcset="img/socolagiontan.jpg" imagesizes="(max-width: 768px) 92vw, 900px" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "KEM Ý SƯƠNG",
+      "image": "https://kemysuong.vercel.app/img/og-kem-y-suong.svg",
+      "description": "Kem thủ công, hương vị nổi bật, đặt hàng nhanh.",
+      "telephone": "+84 933 958 461",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "22 Nguyễn Trung Trực",
+        "addressLocality": "Xã Hồng Dân , Tỉnh Cà Mau",
+        "addressCountry": "VietNam"
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Bricolage+Grotesque:wght@400;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#home">Bỏ qua và xem nội dung</a>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="theme-dock" aria-label="Điều khiển giao diện">
+    <button id="themeToggle" class="theme-toggle" aria-label="Chuyển sang giao diện sáng" title="Đổi giao diện">
+      <span id="themeIcon" aria-hidden="true">🌙</span>
+    </button>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="logo" href="#home">KEM Ý SƯƠNG</a>
+      <div class="menu-control">
+        <button id="menuBtn" class="menu-btn" aria-label="Mở menu" aria-controls="nav" aria-expanded="false">☰</button>
+      </div>
+      <nav id="nav" class="nav nav-panel" aria-label="Menu điều hướng">
+        <a href="#flavors">Hương vị</a>
+        <a href="#experience">Trải nghiệm</a>
+        <a href="#reviews">Đánh giá</a>
+        <a href="#news-promo">Tin tức/Khuyến mãi</a>
+        <a href="#cart-checkout">Giỏ hàng <span id="cartCount" class="cart-count">0</span></a>
+        <a href="#my-orders">Đơn hàng của tôi</a>
+        <a href="#admin-mini" class="nav-admin">Admin</a>
+        <div id="orderDetailsPanel" class="order-details-panel" hidden>
+          <div class="order-details-header">
+            <h4>📦 Chi tiết đơn hàng</h4>
+            <button type="button" class="order-details-close" aria-label="Đóng">×</button>
+          </div>
+          <div id="orderDetailsContent" class="order-details-content">
+            <p class="order-empty">Chưa có đơn hàng nào.</p>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="mobile-dock" aria-label="Điều hướng nhanh">
+    <a class="dock-btn" href="#flavors">
+      <span class="dock-ico" aria-hidden="true">🍦</span>
+      <span class="dock-label">Menu</span>
+    </a>
+    <a class="dock-btn" href="#cart-checkout">
+      <span class="dock-ico" aria-hidden="true">🧺</span>
+      <span class="dock-label">Giỏ</span>
+      <span class="dock-badge" aria-hidden="true"><span id="cartCountDock">0</span></span>
+    </a>
+    <a class="dock-btn" href="#my-orders">
+      <span class="dock-ico" aria-hidden="true">📦</span>
+      <span class="dock-label">Đơn</span>
+    </a>
+    <a class="dock-btn" href="#experience">
+      <span class="dock-ico" aria-hidden="true">⚡</span>
+      <span class="dock-label">Ưu đãi</span>
+    </a>
+  </nav>
+
+  <main id="home">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="container hero-grid">
+        <article class="hero-copy reveal">
+          <p class="hero-kicker">Kem ngon • Giá dễ thương • Đặt nhanh</p>
+          <h1 id="heroTitle">
+              <span>KEM Ý SƯƠNG</span>
+          </h1>
+          <p>Chọn vị bạn thích, thêm vào giỏ, thanh toán trong vài chạm. Giao tận nơi hoặc nhận tại quầy.</p>
+          <div class="hero-actions">
+            <a class="btn btn-solid magnetic" href="#flavors">Khám phá thực đơn</a>
+            <a class="btn btn-outline" href="#cart-checkout">Đặt nhanh</a>
+          </div>
+          <div class="hero-spotlight">
+            <article class="hero-spotlight-card tilt-card" data-tilt="8" data-tilt-depth="8">
+              <strong>Đặt nhanh 30 giây</strong>
+              <p>Menu rõ ràng, thao tác 1 tay, checkout gọn.</p>
+            </article>
+            <article class="hero-spotlight-card tilt-card" data-tilt="8" data-tilt-depth="8">
+              <strong>Vị “đã” ngay từ muỗng đầu</strong>
+              <p>Mịn – thơm – không ngấy, hợp cả trẻ em lẫn người lớn.</p>
+            </article>
+            <article class="hero-spotlight-card tilt-card" data-tilt="8" data-tilt-depth="8">
+              <strong>Giao/nhận linh hoạt</strong>
+              <p>Đóng gói chắc tay, nhận nhanh, giữ vị lâu.</p>
+            </article>
+          </div>
+          <div class="hero-stats stat-row">
+            <div class="stat"><span data-count="45">0</span><small>Hương vị lưu giữ</small></div>
+            <div class="stat"><span data-count="120">0</span><small>Đơn phục vụ mỗi ngày</small></div>
+            <div class="stat"><span data-count="4.9">0</span><small>Đánh giá 5 sao</small></div>
+          </div>
+        </article>
+
+        <article class="hero-visual reveal">
+          <div id="webglStage" class="webgl-stage" aria-hidden="true"></div>
+          <div class="hero-visual-frame tilt-card" data-tilt="16" data-tilt-depth="18">
+            <img src="img/socolagiontan.jpg" alt="Kem que Socola Giòn Tan" width="900" height="700" loading="eager" decoding="async" fetchpriority="high" />
+          </div>
+          <div class="floating-card pulse">
+            <strong>Best seller</strong>
+            <p>Socola giòn tan — thêm 1 cái là thấy “đã”.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="story-section reveal container">
+      <div class="section-header">
+        <h2>Hành trình ấm áp từ mảnh đất công tử</h2>
+        <p>Đưa KEM Ý SƯƠNG trở thành thương hiệu gần gũi, thân thiết và đáng tin cậy với người tiêu dùng.</p>
+      </div>
+      <div class="story-grid">
+        <div class="story-copy">
+          <div class="story-card tilt-card" data-tilt="10" data-tilt-depth="10">
+            <strong>hơn 20 năm kinh nghiệm</strong>
+            <h4>Quy trình thủ công, kiểm soát nhiệt độ chuẩn xác</h4>
+            <p>
+              Kem được đánh bằng tay, từng quả trứng được chọn từ nông trại hữu cơ, sữa tươi được hâm nóng ngay trong ngày.
+              Cam kết không sử dụng hương liệu nhân tạo, giữ đúng vị kem Nguyễn Trường Tộ vang danh.
+            </p>
+            <div class="quality-panel">
+              <p><strong>Lấy cảm hứng từ hương vị kem tuổi thơ</strong> và tinh thần sáng tạo của chúng tôi.</p>
+              <div class="quality-list">
+                <div class="quality-item">
+                  <h5>Vani Bourbon</h5>
+                  <p>Chứa hạt vani nguyên trái, dậy mùi đậm theo từng thìa.</p>
+                </div>
+                <div class="quality-item">
+                  <h5>Socola Cacao 72%</h5>
+                  <p>Được xay mới hàng ngày, phủ bên ngoài lớp vỏ giòn.</p>
+                </div>
+                <div class="quality-item">
+                  <h5>Trái cây theo mùa</h5>
+                  <p>Trái cây được ngâm lạnh để giữ độ ngọt và màu sắc tươi.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="story-media tilt-card" data-tilt="10" data-tilt-depth="14">
+          <img src="img/socolagiontan.jpg" alt="Không gian kem Tràng Tiền" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </section>
+
+    <section id="production" class="section container reveal">
+      <div class="section-header">
+        <h2>Quy trình sản xuất giữ trọn vị tuổi thơ</h2>
+        <p>Nguyên liệu thơm ngon được chọn lọc kỹ, từ cốm xanh non đến khoai môn béo. Khi đủ lạnh, kem được đóng khuôn, làm khô và bảo quản trong tủ đá trước khi phục vụ.</p>
+      </div>
+      <div class="production-grid">
+        <article class="production-card tilt-card" data-tilt="10" data-tilt-depth="12">
+          <img src="img/kemchuoi.jpg" alt="Kem truyền thống" loading="lazy" decoding="async" />
+          <div class="production-body">
+            <h3>Thủ công tinh tế</h3>
+            <p>Cho dù có máy móc hỗ trợ, từng bước vẫn được thịt bởi tay nghề thủ công: sàng cốm, tách trái cây, đánh kem.</p>
+          </div>
+        </article>
+        <article class="production-card tilt-card" data-tilt="10" data-tilt-depth="12">
+          <img src="img/socolagiontan.jpg" alt="Socola giòn tan" loading="lazy" decoding="async" />
+          <div class="production-body">
+            <h3>Khơi gợi ký ức thập niên 2000</h3>
+            <p>Công thức kem trứng truyền thống, lớp caramel vàng ruộm và vỏ socola giòn tan vẫn giữ nguyên.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="ingredients" class="section container reveal">
+      <div class="section-header">
+        <h2>Nguyên liệu tinh túy</h2>
+        <p>Đậu xanh mẩy, cốm tươi, khoai môn béo, cacao Lâm Đồng, dâu tây, dừa tươi đều được chọn lọc để giữ vị kem truyền thống.</p>
+      </div>
+      <div class="ingredient-grid">
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Cốm tươi</h3>
+          <p>Tạo độ dẻo mịn, lan tỏa hương cốm Hà Nội.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Khoai môn</h3>
+          <p>Cho vị ngọt thanh, béo mượt.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Đậu xanh</h3>
+          <p>Tạo độ mẩy và màu vàng dầu.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Dâu tây</h3>
+          <p>Trái chín mọng, thanh mát.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Cacao</h3>
+          <p>Hạt cacao Lâm Đồng giúp vị socola đậm đà.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Dừa</h3>
+          <p>Dừa Bến Tre tươi, sợi trắng.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Trà xanh</h3>
+          <p>Bột trà Nhật nguyên chất cho hậu vị đậm đà.</p>
+        </article>
+        <article class="ingredient-card tilt-card" data-tilt="8" data-tilt-depth="9">
+          <h3>Sầu riêng</h3>
+          <p>Múi sầu riêng thơm lừng, lọc hạt kỹ.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="auth" class="section container reveal auth-section">
+      <div class="section-header">
+        <h2>Phân biệt chính hãng</h2>
+        <p>Logo, bao bì kraft, tem QR và dấu dập thương hiệu giúp bạn chọn đúng kem Ý Sương.</p>
+      </div>
+      <div class="auth-grid">
+        <article class="auth-item">
+          <h3>Logo đặc trưng</h3>
+          <p>Hình tròn màu vàng + logo Tô Châu, ghi năm TC-ice cream.</p>
+        </article>
+        <article class="auth-item">
+          <h3>Màu bao bì</h3>
+          <p>Bao bì giữ nhiệt và hương vị lâu dài.</p>
+        </article>
+        <article class="auth-item">
+          <h3>Mã Vạch</h3>
+          <p>Chống hàng giả, cung cấp thông tin nguồn gốc.</p>
+        </article>
+        <article class="auth-item">
+          <h3>Dấu thương hiệu</h3>
+          <p>Dấu emboss nổi trên bao giúp nhận diện nhanh.</p>
+        </article>
+        <article class="auth-item">
+          <h3>Tên công ty</h3>
+          <p>"Công ty cổ phần Kem Tô Châu" luôn in rõ trên nhãn.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="network" class="section container reveal">
+      <div class="section-header">
+        <h2>Hệ thống và fans yêu kem</h2>
+        <p>Đưa vị kem truyền thống đến gần hơn với mọi miền.</p>
+      </div>
+      <div class="network-stats">
+        <article class="network-card">
+          <strong>20 năm kinh nghiệm.</strong>
+          <p>Hoàn toàn có thể yên tâm về nguồn gốc và chất lượng sản phẩm.</p>
+        </article>
+        <article class="network-card">
+          <strong>Giá cả siêu cạnh tranh</strong>
+          <p>Giá cả dễ dàng cho mọi người tiếp cận đặc biệt là học sinh và sinh viên.</p>
+        </article>
+        <article class="network-card">
+          <strong>Được nhiều bạn hàng Tiền mặtưởng</strong>
+          <p>Có nhiều bạn hàng Tiền mặtưởng và lấy kem giá sỉ từ chúng tôi.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="marquee-wrap">
+      <div class="marquee-track">
+        <span>Yaourt </span><span>tươi ngon mỗi ngày</span><span>vị ngọt thanh, chua nhẹ không gắt</span><span>giao nhanh 30 phút</span><span>hương vị chuẩn xưa</span><span>đóng gói giữ lạnh sâu</span>
+      </div>
+    </section>
+
+    <section id="flavors" class="section container reveal">
+      <div class="section-top">
+        <h2>Menu Signature</h2>
+        <div class="menu-tools">
+          <label class="menu-search" for="searchInput">
+            <span>Tìm món</span>
+            <input id="searchInput" type="search" placeholder="Ví dụ: socola, dâu, yaourt..." autocomplete="off" />
+          </label>
+          <label class="menu-sort" for="sortSelect">
+            <span>Sắp xếp</span>
+            <select id="sortSelect">
+              <option class="opt-default" value="default">• Mặc định</option>
+              <option class="opt-price-asc" value="price-asc">↑ Giá tăng dần</option>
+              <option class="opt-price-desc" value="price-desc">↓ Giá giảm dần</option>
+              <option class="opt-name-asc" value="name-asc">A-Z Tên món</option>
+            </select>
+          </label>
+          <label class="stock-switch" for="stockOnly">
+            <input id="stockOnly" type="checkbox" />
+            <span>Chỉ hiện món còn hàng</span>
+          </label>
+        </div>
+        <div class="stock-insight" aria-live="polite">
+          <span class="stock-pill in">Còn hàng: <strong id="inStockCount">0</strong></span>
+          <span class="stock-pill out">Tạm hết: <strong id="outStockCount">0</strong></span>
+        </div>
+        <div class="chip-row" id="chipRow">
+          <button class="chip is-active" data-filter="all">Toàn bộ</button>
+          <button class="chip" data-filter="cream">Kem que</button>
+          <button class="chip" data-filter="cup">Kem ly</button>
+          <button class="chip" data-filter="premium-cup">Ly cao cấp</button>
+          <button class="chip" data-filter="yogurt">Yaourt</button>
+          <button class="chip" data-filter="bean-dessert">Đá đậu</button>
+        </div>
+      </div>
+      <div id="menuGrid" class="menu-grid"></div>
+    </section>
+
+    <section id="experience" class="section container reveal">
+      <div class="experience-grid">
+        <article>
+          <h2>Bán mang đi nhanh gọn</h2>
+          <p>
+            KEM Ý SƯƠNG tập trung phục vụ mang đi: đóng gói chắc tay, giữ lạnh tốt,
+            nhận món nhanh để bạn tiện mang về nhà, văn phòng hoặc đi dã ngoại.
+          </p>
+          <ul>
+            <li>Đóng gói mang đi chuyên dụng, hạn chế tan chảy.</li>
+            <li>Nhận tại quầy nhanh trong 3-5 phút.</li>
+            <li>Thời gian hoạt động lâu dài.</li>
+          </ul>
+        </article>
+        <aside class="highlight-box">
+          <h3>Ưu đãi mang đi</h3>
+          <p>Yaourt mua 7 tặng 1, mua 30 tặng 3.</p>
+          <a class="btn btn-solid" href="#cart-checkout">Mua ngay</a>
+        </aside>
+      </div>
+    </section>
+
+    <section id="reviews" class="section container reveal">
+      <div class="review-top">
+        <h2>Khách nói gì về KEM Ý SƯƠNG?</h2>
+        <div class="review-controls">
+          <button id="prevReview" aria-label="Trước">‹</button>
+          <button id="nextReview" aria-label="Sau">›</button>
+        </div>
+      </div>
+      <div class="review-card" id="reviewCard"></div>
+    </section>
+
+    <section id="news-promo" class="section container reveal">
+      <div class="section-top">
+        <h2>Tin tức / Khuyến mãi</h2>
+      </div>
+      <div class="news-grid">
+        <article class="news-card">
+          <p class="news-meta">03/2026 • Ưu đãi tháng</p>
+          <h3>Mua 7 tặng 1 cho Yaourt truyền thống</h3>
+          <p>Áp dụng khi mua trực tiếp tại quầy hoặc đặt qua website. Tặng ngay trong hóa đơn.</p>
+          <a class="btn btn-outline" href="#cart-checkout">Áp dụng ngay</a>
+        </article>
+        <article class="news-card">
+          <p class="news-meta">03/2026 • Sản phẩm mới</p>
+          <h3>Kem Que Socola Giòn Tan đã trở lại</h3>
+          <p>Phiên bản giới hạn quay lại theo đợt, số lượng mỗi ngày có hạn.</p>
+          <a class="btn btn-outline" href="#flavors">Xem menu</a>
+        </article>
+        <article class="news-card">
+          <p class="news-meta">03/2026 • Cửa hàng</p>
+          <h3>Ưu tiên phục vụ đơn mang đi nhanh</h3>
+          <p>Khách đặt trước trên web được chuẩn bị sẵn để nhận trong 3-5 phút.</p>
+          <a class="btn btn-outline" href="#experience">Xem chi tiết</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="cart-checkout" class="section container reveal">
+      <div class="checkout-grid">
+        <article class="cart-panel">
+          <div class="cart-head">
+            <h2>Giỏ hàng của bạn</h2>
+            <button id="clearCartBtn" class="btn btn-outline" type="button">Xóa tất cả</button>
+          </div>
+          <div id="cartList" class="cart-list"></div>
+          <p id="cartEmpty" class="cart-empty">Giỏ hàng đang trống. Hãy thêm kem hoặc Yaourt từ menu.</p>
+        </article>
+
+        <form id="checkoutForm" class="checkout-form" novalidate>
+          <h3>Thông tin thanh toán</h3>
+          <label>Họ tên
+            <input type="text" name="customerName" required minlength="2" autocomplete="name" inputmode="text" />
+          </label>
+          <label>Số điện thoại
+            <input type="tel" name="phone" required inputmode="numeric" autocomplete="tel-national" maxlength="10" pattern="^\d{10}$" title="Nhập đúng 10 chữ số" />
+          </label>
+          <label>Hình thức nhận
+            <select name="orderType" id="orderType" required>
+              <option value="DELIVERY">Giao tận nơi</option>
+              <option value="PICKUP">Nhận tại quầy</option>
+            </select>
+          </label>
+          <label>Địa chỉ giao hàng
+            <textarea id="addressField" name="address" rows="2" required minlength="5" autocomplete="street-address"></textarea>
+          </label>
+          <label>Ghi chú (tuỳ chọn)
+            <textarea id="noteField" name="note" rows="2" maxlength="200" placeholder="Ví dụ: Gọi trước khi giao, thêm đá khô..."></textarea>
+          </label>
+          <div class="promo-box">
+            <label for="promoInput">Mã ưu đãi</label>
+            <div class="promo-row">
+              <input id="promoInput" type="text" placeholder="Ví dụ: FREESHIP" autocomplete="off" />
+              <button id="applyPromoBtn" class="btn btn-outline" type="button">Áp dụng</button>
+            </div>
+            <small>Hiện có mã: <strong>FREESHIP</strong></small>
+          </div>
+          <label>Phương thức thanh toán
+            <select name="paymentMethod" required>
+              <option value="CASH">Tiền mặt</option>
+              <option value="BANK_TRANSFER">Chuyển khoản</option>
+              <option value="AUTO_GATEWAY">Cổng thanh toán tự động (Demo)</option>
+            </select>
+          </label>
+          <section id="bankTransferBox" class="bank-transfer" hidden>
+            <h4>Thông tin chuyển khoản</h4>
+            <p><strong>Ngân hàng:</strong> <span id="bankName">MB Bank</span></p>
+            <p><strong>Số tài khoản:</strong> <span id="bankAccountNumber">0877169913</span></p>
+            <p><strong>Chủ tài khoản:</strong> <span id="bankAccountName">BUI QUANG QUY</span></p>
+            <p><strong>Số tiền tạm tính:</strong> <span id="bankAmount">0 đ</span></p>
+            <p><strong>Nội dung CK:</strong> <span id="bankContent">KYS-TAMTINH</span></p>
+            <div class="bank-qr-wrap">
+              <img id="bankQrImage" src="" alt="QR chuyển khoản ngân hàng" width="240" height="240" loading="lazy" decoding="async" />
+            </div>
+            <small>Hệ thống sẽ xác nhận sau khi nhận được giao dịch.</small>
+          </section>
+          <section id="autoGatewayBox" class="gateway-box" hidden>
+            <h4>Thanh toán tự động</h4>
+            <p>Hệ thống sẽ xử lý giao dịch tự động và trả kết quả ngay sau khi bạn bấm thanh toán.</p>
+          </section>
+          <div class="checkout-summary">
+            <div><span>Tạm tính</span><strong id="subtotalValue">0 đ</strong></div>
+            <div><span>Giảm giá</span><strong id="discountValue">- 0 đ</strong></div>
+            <div><span>Phí giao hàng</span><strong id="shippingValue">0 đ</strong></div>
+            <div class="grand"><span>Tổng thanh toán</span><strong id="totalValue">0 đ</strong></div>
+          </div>
+          <label class="terms-check">
+            <input id="termsCheck" type="checkbox" />
+            <span>Tôi xác nhận thông tin đơn hàng và số điện thoại nhận hàng là chính xác.</span>
+          </label>
+          <button class="btn btn-solid" type="submit">Thanh toán</button>
+          <p class="form-msg" id="checkoutMsg" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="admin-mini" class="section container reveal">
+      <div class="admin-panel">
+        <div id="adminAuthBox" class="admin-auth-box">
+          <h2>Admin</h2>
+          <p>Nhập mật khẩu để vào khu quản trị.</p>
+          <label>Mật khẩu admin
+            <input id="adminPasswordInput" type="password" placeholder="Nhập mật khẩu..." autocomplete="current-password" />
+          </label>
+          <button id="adminUnlockBtn" class="btn btn-solid" type="button">Mở khu admin</button>
+          <p id="adminAuthMsg" class="form-msg" aria-live="polite"></p>
+        </div>
+
+        <div id="adminPanelWrap" hidden>
+          <div class="admin-top">
+            <h2>Admin</h2>
+            <p>Chỉ cần mật khẩu admin để xem và quản lý đơn giản lập.</p>
+          </div>
+          <div class="admin-form-grid">
+            <!-- Phone filter removed per task: bỏ phần tiến số lùi số -->
+            <label>Trạng thái đơn
+              <select id="adminStatusFilter">
+                <option value="">Tất cả</option>
+                <option value="PENDING_CONFIRMATION">Chờ xác nhận</option>
+                <option value="CONFIRMED">Đã xác nhận</option>
+                <option value="CANCELLED">Đã hủy</option>
+              </select>
+            </label>
+            <label>Trạng thái thanh toán
+              <select id="adminPaymentStatusFilter">
+                <option value="">Tất cả</option>
+                <option value="UNPAID">Chưa thanh toán</option>
+                <option value="WAITING_TRANSFER">Chờ chuyển khoản</option>
+                <option value="PAID">Đã thanh toán</option>
+                <option value="PENDING">Đang xử lý</option>
+              </select>
+            </label>
+            <label>Nhóm hiển thị
+              <select id="adminGroupFilter">
+                <option value="">Tất cả</option>
+                <option value="UNPAID">Chưa thanh toán</option>
+                <option value="PAID">Đã thanh toán</option>
+                <option value="FINISHED">Đã hoàn thành</option>
+                <option value="CANCELLED">Đã hủy</option>
+              </select>
+            </label>
+          </div>
+          <div class="admin-actions">
+            <button id="adminFetchOrdersBtn" class="btn btn-solid" type="button">Tải đơn hàng</button>
+            <button id="adminClearViewBtn" class="btn btn-outline" type="button">Xóa danh sách</button>
+          </div>
+          <p id="adminMsg" class="form-msg" aria-live="polite"></p>
+          <div id="adminOrdersList" class="admin-orders-list"></div>
+          <div class="admin-pagination">
+            <button id="adminPrevPageBtn" class="btn btn-outline" type="button">Trang trước</button>
+            <span id="adminPageInfo">Trang 1 / 1</span>
+            <button id="adminNextPageBtn" class="btn btn-outline" type="button">Trang sau</button>
+          </div>
+          <div class="admin-divider"></div>
+          <div class="admin-menu">
+            <h3>Quản lý menu</h3>
+            <p>Thay đổi số lượng hoặc tạm ngưng bán sẽ lưu trên trình duyệt này.</p>
+            <div class="admin-menu-actions">
+              <button id="adminMenuResetBtn" class="btn btn-outline" type="button">Khôi phục mặc định</button>
+              <button id="adminMenuSaveBtn" class="btn btn-solid" type="button" disabled>Đã lưu server</button>
+            </div>
+            <div id="adminMenuList" class="admin-menu-list"></div>
+            <p id="adminMenuMsg" class="form-msg" aria-live="polite"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="my-orders" class="section container reveal">
+      <div class="my-orders-panel">
+        <div class="section-header">
+          <h2>Đơn hàng của bạn</h2>
+          <p>Xem lịch sử đặt hàng theo số điện thoại.</p>
+        </div>
+        <div class="my-orders-form">
+          <label>Số điện thoại
+            <input id="myOrdersPhoneInput" type="tel" placeholder="Nhập số ĐT đã đặt hàng" maxlength="10" inputmode="numeric" />
+          </label>
+        </div>
+        <div id="myOrdersList" class="my-orders-list"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-block">
+        <h4>KEM Ý SƯƠNG</h4>
+        <p>© Bùi Quang Quý</p>
+        <p>Địa chỉ: Hồng Dân, Bạc Liêu (Giao hàng tận nơi)</p>
+        <p>SĐT: <a href="tel:0877169913">0877 169 913</a></p>
+      </div>
+      <div class="footer-block">
+        <h4>Giờ mở cửa</h4>
+        <ul class="hours-list">
+          <li>Thứ 2 - Thứ 6: 06:00 - 20:00</li>
+          <li>Thứ 7 - Chủ nhật: 06:00 - 19:30</li>
+          <li>Nhận đơn online: 09:00 - 19:00</li>
+        </ul>
+      </div>
+      <div class="footer-map">
+        <h4>Bản đồ cửa hàng</h4>
+        <iframe
+          title="Bản đồ khu vực cửa hàng KEM Ý SƯƠNG"
+          loading="lazy"
+          style="border:0;"
+          width="100%"
+          height="260"
+          allowfullscreen=""
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3934.3025774072244!2d105.44662637572746!3d9.569164380298394!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0e1abef59fad5%3A0x5d735c249990a954!2zQ-G7rWEgSMOgbmcgS2VtIMOdIFPGsMahbmc!5e0!3m2!1svi!2s!4v1773333651673!5m2!1svi!2s">
+        </iframe>
+      </div>
+    </div>
+  </footer>
+
+  <script src="orders-db.js" defer></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    const adminLazyLoad = () => import('./admin.js');
+    const myOrdersLazyLoad = () => import('./my-orders.js');
+    const maybeLoadAdmin = () => {
+      if (location.hash === '#admin-mini') {
+        adminLazyLoad();
+      }
+    };
+    const maybeLoadMyOrders = () => {
+      if (location.hash === '#my-orders') {
+        myOrdersLazyLoad();
+      }
+    };
+
+    window.addEventListener('hashchange', () => {
+      maybeLoadAdmin();
+      maybeLoadMyOrders();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      maybeLoadAdmin();
+      maybeLoadMyOrders();
+      const adminLink = document.querySelector('a[href="#admin-mini"]');
+      adminLink?.addEventListener('click', () => setTimeout(maybeLoadAdmin, 0));
+      const myOrdersLink = document.querySelector('a[href="#my-orders"]');
+      myOrdersLink?.addEventListener('click', () => setTimeout(maybeLoadMyOrders, 0));
+    });
+  </script>
+  <script type="module" src="webgl.js"></script>
+</body>
+</html>
+
+
+
