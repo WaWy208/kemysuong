@@ -1,7 +1,10 @@
 ﻿(function () {
 const currency = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+const API_BASE_URL = String(document.querySelector('meta[name="api-base-url"]')?.content || '')
+  .trim()
+  .replace(/\/$/, '');
 const ADMIN_PASSWORD = 'buiquangquy25122007';
-const MENU_OVERRIDE_KEY = 'kem-y-suong-menu-overrides';
+const MENU_API_URL = `${API_BASE_URL}/api/menu`;
 const MOCK_PAGE_SIZE = 8;
 const MENU_TYPE_LABELS = {
   cream: 'Kem que',
@@ -44,24 +47,45 @@ function getMenuItems() {
   return Array.isArray(items) ? items : [];
 }
 
-async function getMenuOverrides() {
-  try {
-    const raw = window.localStorage.getItem(MENU_OVERRIDE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch (_error) {
-    return {};
+async function requestMenuApi(path, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Admin-Password': ADMIN_PASSWORD,
+    ...(options.headers || {})
+  };
+
+  const response = await fetch(path, {
+    ...options,
+    headers
+  });
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(payload.error || 'Không thể lưu menu lên web.');
   }
+
+  return payload;
 }
 
-function saveMenuOverrides(overrides) {
-  try {
-    window.localStorage.setItem(MENU_OVERRIDE_KEY, JSON.stringify(overrides));
-  } catch (_error) {
-    // Ignore storage failures.
+async function fetchLatestMenuItems() {
+  if (typeof window.refreshMenuFromServer === 'function') {
+    const loaded = await window.refreshMenuFromServer();
+    if (!loaded) {
+      throw new Error('Không thể tải menu từ web.');
+    }
+    return getMenuItems();
   }
+
+  const response = await fetch(MENU_API_URL, { cache: 'no-store' });
+  if (!response.ok) {
+    throw new Error('Không thể tải menu từ web.');
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload.items) ? payload.items : [];
 }
 
-function syncSaveButton(label = 'Tự động lưu') {
+function syncSaveButton(label = 'Tự động lưu lên web') {
   const saveBtn = document.getElementById('adminMenuSaveBtn');
   if (!saveBtn) return;
   saveBtn.disabled = true;
@@ -74,40 +98,39 @@ function normalizeStock(value) {
   return Math.floor(next);
 }
 
-async function updateMenuOverride(itemId, patch) {
-  const overrides = await getMenuOverrides();
-  overrides[itemId] = { ...overrides[itemId], ...patch };
-  saveMenuOverrides(overrides);
+async function updateMenuItem(itemId, patch) {
+  syncSaveButton('Đang lưu...');
+  await requestMenuApi(`${MENU_API_URL}/${encodeURIComponent(itemId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch)
+  });
+  await fetchLatestMenuItems();
+  await renderAdminMenu();
   window.dispatchEvent(new CustomEvent('menu:updated'));
-  syncSaveButton('Đã lưu');
-  setAdminMenuMessage('Đã lưu thay đổi trên trình duyệt này.', 'ok');
+  syncSaveButton('Đã lưu lên web');
 }
 
 async function renderAdminMenu() {
   const list = document.getElementById('adminMenuList');
   if (!list) return;
 
-  const items = getMenuItems();
+  const items = await fetchLatestMenuItems();
   if (!items.length) {
     list.innerHTML = '<p class="empty-result">Không có món nào để quản lý.</p>';
     return;
   }
 
-  const overrides = await getMenuOverrides();
-
   list.innerHTML = items.map((item) => {
-    const override = overrides[item.id] || {};
-    const stockValue = normalizeStock(
-      typeof override.inventoryCount === 'number' ? override.inventoryCount : item.stock
-    );
-    const paused = typeof override.isPaused === 'boolean' ? override.isPaused : Boolean(item.paused);
+    const stockValue = normalizeStock(item.stock);
+    const paused = Boolean(item.paused);
     const typeLabel = MENU_TYPE_LABELS[item.type] || item.type;
 
     return `
       <div class="admin-menu-item" data-id="${item.id}">
         <div class="admin-menu-info">
           <strong>${escapeHtml(item.name)}</strong>
-          <span class="admin-menu-meta">Loại: ${escapeHtml(typeLabel)} • Giá: ${currency.format(item.price)}</span>
+          <span class="admin-menu-meta">Loại: ${escapeHtml(typeLabel)} • Giá: ${currency.format(item.price)} • ID: ${escapeHtml(item.id)}</span>
+          <span class="admin-menu-meta">${escapeHtml(item.desc || 'Chưa có mô tả')}</span>
         </div>
         <div class="admin-menu-controls">
           <div class="admin-stock-stepper">
@@ -124,6 +147,80 @@ async function renderAdminMenu() {
     `;
   }).join('');
 }
+
+function readNewMenuPayload() {
+  const name = String(document.getElementById('adminNewItemName')?.value || '').trim();
+  const type = String(document.getElementById('adminNewItemType')?.value || '').trim();
+  const price = Number(document.getElementById('adminNewItemPrice')?.value || 0);
+  const stock = normalizeStock(document.getElementById('adminNewItemStock')?.value || 0);
+  const image = String(document.getElementById('adminNewItemImage')?.value || '').trim();
+  const alt = String(document.getElementById('adminNewItemAlt')?.value || '').trim();
+  const desc = String(document.getElementById('adminNewItemDesc')?.value || '').trim();
+  const paused = Boolean(document.getElementById('adminNewItemPaused')?.checked);
+
+  if (!name) throw new Error('Vui lòng nhập tên món.');
+  if (!type) throw new Error('Vui lòng chọn loại món.');
+  if (!Number.isFinite(price) || price < 0) throw new Error('Giá món không hợp lệ.');
+  if (!image) throw new Error('Vui lòng nhập đường dẫn ảnh hoặc URL ảnh.');
+
+  return {
+    name,
+    type,
+    price,
+    stock,
+    image,
+    alt,
+    desc,
+    paused
+  };
+}
+
+function clearNewMenuForm() {
+  const ids = [
+    'adminNewItemName',
+    'adminNewItemPrice',
+    'adminNewItemStock',
+    'adminNewItemImage',
+    'adminNewItemAlt',
+    'adminNewItemDesc'
+  ];
+
+  ids.forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) input.value = '';
+  });
+
+  const typeSelect = document.getElementById('adminNewItemType');
+  if (typeSelect) typeSelect.value = 'cream';
+
+  const pausedCheckbox = document.getElementById('adminNewItemPaused');
+  if (pausedCheckbox) pausedCheckbox.checked = false;
+}
+
+async function createMenuItemRecord() {
+  const payload = readNewMenuPayload();
+  syncSaveButton('Đang lưu...');
+  await requestMenuApi(MENU_API_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+  clearNewMenuForm();
+  await renderAdminMenu();
+  window.dispatchEvent(new CustomEvent('menu:updated'));
+  syncSaveButton('Đã lưu lên web');
+}
+
+async function resetMenuToSeed() {
+  syncSaveButton('Đang khôi phục...');
+  await requestMenuApi(`${MENU_API_URL}/reset`, {
+    method: 'POST',
+    body: JSON.stringify({})
+  });
+  await renderAdminMenu();
+  window.dispatchEvent(new CustomEvent('menu:updated'));
+  syncSaveButton('Đã lưu lên web');
+}
+
 function updateAdminPaginationUi() {
   const pageInfo = document.getElementById('adminPageInfo');
   const prevBtn = document.getElementById('adminPrevPageBtn');
@@ -334,6 +431,7 @@ async function bindAdminPanel() {
   const list = document.getElementById('adminOrdersList');
   const menuList = document.getElementById('adminMenuList');
   const menuResetBtn = document.getElementById('adminMenuResetBtn');
+  const menuAddBtn = document.getElementById('adminMenuAddBtn');
   if (!fetchBtn || !clearBtn || !list || !prevPageBtn || !nextPageBtn) return;
 
   adminPanelBound = true;
@@ -416,7 +514,7 @@ async function bindAdminPanel() {
   updateAdminPaginationUi();
 
   if (menuList) {
-    menuList.addEventListener('click', (event) => {
+    menuList.addEventListener('click', async (event) => {
       const stepBtn = event.target.closest('button[data-step]');
       if (!stepBtn) return;
       const itemEl = stepBtn.closest('.admin-menu-item');
@@ -427,38 +525,65 @@ async function bindAdminPanel() {
       const current = normalizeStock(input.value);
       const next = normalizeStock(current + step);
       input.value = String(next);
-      updateMenuOverride(itemEl.dataset.id, { stock: next });
-      setAdminMenuMessage('Đã lưu thay đổi số lượng (lưu cục bộ).', 'ok');
+      try {
+        await updateMenuItem(itemEl.dataset.id, { stock: next });
+        setAdminMenuMessage('Đã lưu thay đổi số lượng lên web.', 'ok');
+      } catch (error) {
+        await renderAdminMenu();
+        setAdminMenuMessage(error.message || 'Không thể cập nhật số lượng.', 'err');
+      }
     });
 
-    menuList.addEventListener('change', (event) => {
+    menuList.addEventListener('change', async (event) => {
       const itemEl = event.target.closest('.admin-menu-item');
       if (!itemEl) return;
       if (event.target.type === 'number') {
         const next = normalizeStock(event.target.value);
         event.target.value = String(next);
-        updateMenuOverride(itemEl.dataset.id, { stock: next });
-        setAdminMenuMessage('Đã lưu thay đổi số lượng (lưu cục bộ).', 'ok');
+        try {
+          await updateMenuItem(itemEl.dataset.id, { stock: next });
+          setAdminMenuMessage('Đã lưu thay đổi số lượng lên web.', 'ok');
+        } catch (error) {
+          await renderAdminMenu();
+          setAdminMenuMessage(error.message || 'Không thể cập nhật số lượng.', 'err');
+        }
         return;
       }
       if (event.target.type === 'checkbox') {
-        updateMenuOverride(itemEl.dataset.id, { paused: event.target.checked });
-        setAdminMenuMessage('Đã cập nhật trạng thái bán (lưu cục bộ).', 'ok');
+        try {
+          await updateMenuItem(itemEl.dataset.id, { paused: event.target.checked });
+          setAdminMenuMessage('Đã cập nhật trạng thái bán lên web.', 'ok');
+        } catch (error) {
+          await renderAdminMenu();
+          setAdminMenuMessage(error.message || 'Không thể cập nhật trạng thái bán.', 'err');
+        }
       }
     });
 
+    if (menuAddBtn) {
+      menuAddBtn.addEventListener('click', async () => {
+        try {
+          await createMenuItemRecord();
+          setAdminMenuMessage('Đã thêm món mới lên web.', 'ok');
+        } catch (error) {
+          setAdminMenuMessage(error.message || 'Không thể thêm món mới.', 'err');
+        }
+      });
+    }
+
     if (menuResetBtn) {
       menuResetBtn.addEventListener('click', async () => {
-        saveMenuOverrides({});
-        await renderAdminMenu();
-        window.dispatchEvent(new CustomEvent('menu:updated'));
-        syncSaveButton('Đã lưu');
-        setAdminMenuMessage('Đã khôi phục mặc định trên trình duyệt này.', 'ok');
+        try {
+          await resetMenuToSeed();
+          setAdminMenuMessage('Đã khôi phục menu gốc trên web.', 'ok');
+        } catch (error) {
+          setAdminMenuMessage(error.message || 'Không thể khôi phục menu.', 'err');
+        }
       });
     }
 
     syncSaveButton();
-    await renderAdminMenu(); // Await for async overrides
+    await renderAdminMenu();
   }
 }
 

@@ -12,8 +12,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="vi_VN" />
   <meta name="robots" content="index,follow" />
-  <meta name="app-base-url" content="http://localhost:4000" />
-  <meta name="api-base-url" content="http://localhost:4000" />
+  <meta name="api-base-url" content="http://127.0.0.1:4000" />
   <link rel="canonical" href="https://kemysuong.vercel.app/" />
   <link rel="preload" as="image" href="img/socolagiontan.jpg" imagesrcset="img/socolagiontan.jpg" imagesizes="(max-width: 768px) 92vw, 900px" />
   <script type="application/ld+json">
@@ -535,10 +534,48 @@
           <div class="admin-divider"></div>
           <div class="admin-menu">
             <h3>Quản lý menu</h3>
-            <p>Thay đổi số lượng hoặc tạm ngưng bán sẽ lưu trên trình duyệt này.</p>
+            <p>Thêm món mới, đổi số lượng và tạm ngưng bán sẽ được lưu lên web.</p>
+            <div class="admin-menu-create">
+              <h4>Thêm món mới</h4>
+              <p class="admin-menu-hint">Ảnh có thể là đường dẫn như <code>img/ten-anh.jpg</code> hoặc một URL đầy đủ.</p>
+              <div class="admin-menu-create-grid">
+                <label>Tên món
+                  <input id="adminNewItemName" type="text" placeholder="Ví dụ: Kem Matcha" />
+                </label>
+                <label>Loại món
+                  <select id="adminNewItemType">
+                    <option value="cream">Kem que</option>
+                    <option value="cup">Kem ly</option>
+                    <option value="premium-cup">Ly cao cấp</option>
+                    <option value="yogurt">Yaourt</option>
+                    <option value="bean-dessert">Đá đậu</option>
+                  </select>
+                </label>
+                <label>Giá (VND)
+                  <input id="adminNewItemPrice" type="number" min="0" step="1000" placeholder="5000" />
+                </label>
+                <label>Số lượng
+                  <input id="adminNewItemStock" type="number" min="0" step="1" placeholder="20" />
+                </label>
+                <label>Ảnh
+                  <input id="adminNewItemImage" type="text" placeholder="img/ten-anh.jpg hoặc https://..." />
+                </label>
+                <label>Alt ảnh
+                  <input id="adminNewItemAlt" type="text" placeholder="Mô tả ngắn cho ảnh" />
+                </label>
+                <label class="admin-menu-create-full">Mô tả
+                  <textarea id="adminNewItemDesc" rows="3" placeholder="Mô tả ngắn về món"></textarea>
+                </label>
+                <label class="admin-menu-create-check">
+                  <input id="adminNewItemPaused" type="checkbox" />
+                  <span>Tạm ngưng bán ngay sau khi tạo</span>
+                </label>
+              </div>
+              <button id="adminMenuAddBtn" class="btn btn-solid" type="button">Thêm món mới</button>
+            </div>
             <div class="admin-menu-actions">
               <button id="adminMenuResetBtn" class="btn btn-outline" type="button">Khôi phục mặc định</button>
-              <button id="adminMenuSaveBtn" class="btn btn-solid" type="button" disabled>Tự động lưu</button>
+              <button id="adminMenuSaveBtn" class="btn btn-solid" type="button" disabled>Tự động lưu lên web</button>
             </div>
             <div id="adminMenuList" class="admin-menu-list"></div>
             <p id="adminMenuMsg" class="form-msg" aria-live="polite"></p>
@@ -598,34 +635,8 @@
 
   <script src="orders-db.js" defer></script>
   <script src="app.js" defer></script>
-  <script type="module">
-    const adminLazyLoad = () => import('./admin.js');
-    const myOrdersLazyLoad = () => import('./my-orders.js');
-    const maybeLoadAdmin = () => {
-      if (location.hash === '#admin-mini') {
-        adminLazyLoad();
-      }
-    };
-    const maybeLoadMyOrders = () => {
-      if (location.hash === '#my-orders') {
-        myOrdersLazyLoad();
-      }
-    };
-
-    window.addEventListener('hashchange', () => {
-      maybeLoadAdmin();
-      maybeLoadMyOrders();
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      maybeLoadAdmin();
-      maybeLoadMyOrders();
-      const adminLink = document.querySelector('a[href="#admin-mini"]');
-      adminLink?.addEventListener('click', () => setTimeout(maybeLoadAdmin, 0));
-      const myOrdersLink = document.querySelector('a[href="#my-orders"]');
-      myOrdersLink?.addEventListener('click', () => setTimeout(maybeLoadMyOrders, 0));
-    });
-  </script>
+  <script src="admin.js" defer></script>
+  <script src="my-orders.js" defer></script>
   <script type="module" src="webgl.js"></script>
 </body>
 </html>

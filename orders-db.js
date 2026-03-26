@@ -25,6 +25,7 @@
   function saveOrders(orders) {
     try {
       window.localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+      window.dispatchEvent(new CustomEvent('orders:updated'));
     } catch (_error) {
       // ignore
     }

@@ -20,19 +20,25 @@
   }
 
   function setUserPhone(phone) {
+    const normalizedPhone = String(phone || '').trim();
+
     try {
-      localStorage.setItem(USER_PHONE_KEY, String(phone || '').trim());
+      if (normalizedPhone) {
+        localStorage.setItem(USER_PHONE_KEY, normalizedPhone);
+      } else {
+        localStorage.removeItem(USER_PHONE_KEY);
+      }
     } catch {
       // ignore
     }
+
+    window.dispatchEvent(new CustomEvent('user-phone:updated', {
+      detail: { phone: normalizedPhone }
+    }));
   }
 
   function loadOrders() {
     return window.OrderDB ? window.OrderDB.loadOrders() : [];
-  }
-
-  function hasUserOrders(orders, phone) {
-    return orders.some(order => String(order.phone || '').trim() === phone);
   }
 
   function renderMyOrders() {
@@ -41,13 +47,15 @@
 
     const phone = getUserPhone();
     const allOrders = loadOrders();
-    const myOrders = phone ? allOrders.filter(order => String(order.phone || '').trim() === phone) : [];
+    const myOrders = phone
+      ? allOrders.filter((order) => String(order.phone || '').trim() === phone)
+      : [];
 
     if (!phone) {
       container.innerHTML = `
         <div class="my-orders-empty">
-          <p>📱 Vui lòng đặt hàng trước để xem đơn của bạn.</p>
-          <p><a href="#cart-checkout">Đi đến giỏ hàng</a></p>
+          <p>Nhap so dien thoai da dat hang de xem lich su don.</p>
+          <p><a href="#cart-checkout">Di den gio hang</a></p>
         </div>
       `;
       return;
@@ -56,25 +64,29 @@
     if (!myOrders.length) {
       container.innerHTML = `
         <div class="my-orders-empty">
-          <p>📦 Chưa có đơn hàng nào với số ${escapeHtml(phone)}.</p>
-          <p><a href="#cart-checkout">Đặt hàng mới</a></p>
+          <p>Chua co don hang nao voi so ${escapeHtml(phone)}.</p>
+          <p><a href="#cart-checkout">Dat hang moi</a></p>
         </div>
       `;
       return;
     }
 
-    container.innerHTML = myOrders.map(order => {
-      const items = Array.isArray(order.items) ? order.items.map(item => `${escapeHtml(item.name)} x${item.quantity}`).join(', ') : '';
-      const statusMap = {
-        'PENDING_CONFIRMATION': '⏳ Chờ xác nhận',
-        'CONFIRMED': '✅ Hoàn thành',
-        'CANCELLED': '❌ Đã hủy'
-      };
-      const paymentMap = {
-        'PAID': '✅ Đã thanh toán',
-        'UNPAID': '⏳ Chưa thanh toán',
-        'WAITING_TRANSFER': '⏳ Chờ chuyển khoản'
-      };
+    const statusMap = {
+      PENDING_CONFIRMATION: 'Cho xac nhan',
+      CONFIRMED: 'Hoan thanh',
+      CANCELLED: 'Da huy'
+    };
+    const paymentMap = {
+      PAID: 'Da thanh toan',
+      UNPAID: 'Chua thanh toan',
+      WAITING_TRANSFER: 'Cho chuyen khoan',
+      PENDING: 'Dang xu ly'
+    };
+
+    container.innerHTML = myOrders.map((order) => {
+      const items = Array.isArray(order.items)
+        ? order.items.map((item) => `${escapeHtml(item.name)} x${Number(item.quantity)}`).join(', ')
+        : '';
       const createdTime = order.createdAt ? new Date(order.createdAt).toLocaleString('vi-VN') : '';
       const statusDisplay = statusMap[order.status] || order.status;
       const paymentDisplay = paymentMap[order.paymentStatus] || order.paymentStatus;
@@ -85,16 +97,16 @@
             <h4>${escapeHtml(order.orderCode)}</h4>
             <span class="my-order-date">${createdTime}</span>
           </div>
-          <p class="my-order-meta">Tổng: <strong>${currency.format(Number(order.total) || 0)}</strong> | ${statusDisplay} | ${paymentDisplay}</p>
-          <p class="my-order-items">${items || 'Không có dữ liệu'}</p>
+          <p class="my-order-meta">Tong: <strong>${currency.format(Number(order.total) || 0)}</strong> | ${escapeHtml(statusDisplay)} | ${escapeHtml(paymentDisplay)}</p>
+          <p class="my-order-items">${items || 'Khong co du lieu'}</p>
           <details class="my-order-details">
-            <summary>Xem chi tiết</summary>
+            <summary>Xem chi tiet</summary>
             <div>
-              <p><strong>Khách hàng:</strong> ${escapeHtml(order.customerName)}</p>
-              <p><strong>Điện thoại:</strong> ${escapeHtml(order.phone)}</p>
-              <p><strong>Địa chỉ:</strong> ${escapeHtml(order.address)}</p>
-              <p><strong>Ghi chú:</strong> ${escapeHtml(order.note || 'Không có')}</p>
-              <p><strong>Thanh toán:</strong> ${escapeHtml(order.paymentMethod)}</p>
+              <p><strong>Khach hang:</strong> ${escapeHtml(order.customerName)}</p>
+              <p><strong>Dien thoai:</strong> ${escapeHtml(order.phone)}</p>
+              <p><strong>Dia chi:</strong> ${escapeHtml(order.address)}</p>
+              <p><strong>Ghi chu:</strong> ${escapeHtml(order.note || 'Khong co')}</p>
+              <p><strong>Thanh toan:</strong> ${escapeHtml(order.paymentMethod)}</p>
             </div>
           </details>
         </article>
@@ -106,28 +118,32 @@
 
   function bindMyOrders() {
     const phoneInput = document.getElementById('myOrdersPhoneInput');
+    const syncView = () => {
+      if (phoneInput) {
+        phoneInput.value = getUserPhone();
+      }
+      renderMyOrders();
+    };
+
     if (phoneInput) {
       phoneInput.value = getUserPhone();
-      phoneInput.addEventListener('change', (e) => {
-        const newPhone = e.target.value.trim();
-        if (newPhone) {
-          setUserPhone(newPhone);
-          renderMyOrders();
-        }
-      });
+      const handlePhoneChange = (event) => {
+        setUserPhone(event.target.value);
+      };
+      phoneInput.addEventListener('input', handlePhoneChange);
+      phoneInput.addEventListener('change', handlePhoneChange);
     }
 
-    // Auto refresh on OrderDB changes
-    const observer = new MutationObserver(renderMyOrders);
-    const orderKey = window.OrderDB?.ORDERS_KEY;
-    if (orderKey) {
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['localStorage']
-      });
-    }
+    window.addEventListener('orders:updated', syncView);
+    window.addEventListener('user-phone:updated', syncView);
+    window.addEventListener('storage', (event) => {
+      if (event.key === USER_PHONE_KEY || event.key === window.OrderDB?.ORDERS_KEY) {
+        syncView();
+      }
+    });
 
-    renderMyOrders();
+    window.setUserPhone = setUserPhone;
+    syncView();
   }
 
   if (document.readyState === 'loading') {
@@ -136,4 +152,3 @@
     bindMyOrders();
   }
 })();
-

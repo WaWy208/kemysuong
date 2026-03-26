@@ -1,4 +1,4 @@
-const menuItems = [
+const DEFAULT_MENU_ITEMS = [
   {
     id: 'kem-que-socola-gion-tan',
     name: 'Kem Que Socola Giòn Tan',
@@ -121,11 +121,12 @@ const menuItems = [
   }
 ];
 
+const menuItems = DEFAULT_MENU_ITEMS.map((item) => ({
+  ...item,
+  paused: Boolean(item.paused)
+}));
+
 window.menuItems = menuItems;
-const MENU_BASELINE = menuItems.reduce((acc, item) => {
-  acc[item.id] = { stock: item.stock, paused: Boolean(item.paused) };
-  return acc;
-}, {});
 
 const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
 const PREFERS_REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -147,10 +148,13 @@ const reviews = [
 ];
 
 const currency = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+const API_BASE_URL = String(document.querySelector('meta[name="api-base-url"]')?.content || '')
+  .trim()
+  .replace(/\/$/, '');
 const THEME_KEY = 'kem-y-suong-theme';
 const CART_KEY = 'kem-y-suong-cart';
 const PROMO_KEY = 'kem-y-suong-promo';
-const MENU_OVERRIDE_KEY = 'kem-y-suong-menu-overrides';
+const MENU_API_URL = `${API_BASE_URL}/api/menu`;
 const SHIPPING_FEE_DELIVERY = 0;
 const BANK_TRANSFER_INFO = {
   bankBin: '970422',
@@ -204,35 +208,50 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function loadMenuOverrides() {
+function normalizeMenuItem(item) {
+  return {
+    id: String(item?.id || `menu-${Date.now()}`).trim(),
+    name: String(item?.name || '').trim(),
+    type: String(item?.type || 'cream').trim(),
+    price: Math.max(0, Number(item?.price) || 0),
+    stock: Math.max(0, Math.floor(Number(item?.stock) || 0)),
+    desc: String(item?.desc || '').trim(),
+    image: String(item?.image || '').trim(),
+    alt: String(item?.alt || item?.name || '').trim(),
+    paused: Boolean(item?.paused)
+  };
+}
+
+function replaceMenuItems(nextItems) {
+  const normalizedItems = Array.isArray(nextItems)
+    ? nextItems
+        .map(normalizeMenuItem)
+        .filter((item) => item.id && item.name && item.image)
+    : [];
+
+  menuItems.splice(0, menuItems.length, ...normalizedItems);
+}
+
+async function refreshMenuFromServer({ useFallback = false } = {}) {
   try {
-    const raw = localStorage.getItem(MENU_OVERRIDE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch (_error) {
-    return {};
+    const response = await fetch(MENU_API_URL, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Menu request failed with status ${response.status}`);
+    }
+
+    const payload = await response.json();
+    replaceMenuItems(payload.items);
+    return true;
+  } catch (error) {
+    if (useFallback) {
+      replaceMenuItems(DEFAULT_MENU_ITEMS);
+    }
+    console.warn('Unable to load menu from server:', error);
+    return false;
   }
 }
 
-function applyMenuOverrides() {
-  const overrides = loadMenuOverrides();
-  menuItems.forEach((item) => {
-    const base = MENU_BASELINE[item.id];
-    if (base) {
-      item.stock = base.stock;
-      item.paused = base.paused;
-    }
-    const override = overrides[item.id];
-    if (!override) return;
-    if (typeof override.stock === 'number' && Number.isFinite(override.stock)) {
-      item.stock = Math.max(0, Math.floor(override.stock));
-    }
-    if (typeof override.paused === 'boolean') {
-      item.paused = override.paused;
-    }
-  });
-}
+window.refreshMenuFromServer = refreshMenuFromServer;
 
 function getInitialTheme() {
   const saved = localStorage.getItem(THEME_KEY);
@@ -809,7 +828,9 @@ function bindCheckoutForm() {
     previewTransferCode = generateOrderCode();
 
     // Save user phone for my-orders filtering
-    setUserPhone(phone);  // Note: setUserPhone from my-orders.js is global
+    if (typeof window.setUserPhone === 'function') {
+      window.setUserPhone(phone);
+    }
 
     const order = {
       orderCode,
@@ -952,24 +973,16 @@ function bindFilterControls() {
   if (stockOnly) stockOnly.addEventListener('change', renderMenu);
 }
 
-window.addEventListener('menu:updated', () => {
-  applyMenuOverrides();
+window.addEventListener('menu:updated', async () => {
+  const loaded = await refreshMenuFromServer();
   const changed = syncCartAvailability();
   renderMenu();
   renderCart();
+  if (!loaded) return;
   if (changed) setCheckoutMessage('Một số món đã tạm ngưng bán hoặc hết hàng. Vui lòng kiểm tra lại giỏ hàng.', 'err');
 });
 
-// Expose setUserPhone globally for app.js checkout
-window.setUserPhone = (phone) => {
-  try {
-    localStorage.setItem('kem-y-suong-user-phone', String(phone || '').trim());
-  } catch {
-    // ignore
-  }
-};
-
-function init() {
+async function init() {
   bindThemeToggle();
   bindMobileMenu();
   bindFilterControls();
@@ -984,7 +997,7 @@ function init() {
   loadCart();
   loadPromoFromStorage();
 
-  applyMenuOverrides();
+  await refreshMenuFromServer({ useFallback: true });
   syncCartAvailability();
   renderMenu();
   renderCart();

@@ -1,0 +1,134 @@
+[
+  {
+    "id": "kem-que-socola-gion-tan",
+    "name": "Kem Que Socola Gion Tan",
+    "type": "cream",
+    "price": 5000,
+    "stock": 120,
+    "desc": "Lop socola phu gion, ben trong min beo.",
+    "image": "img/socolagiontan3.jpg",
+    "alt": "Kem que socola gion tan",
+    "paused": false
+  },
+  {
+    "id": "kem-que-sua-dua",
+    "name": "Kem Que Sua Dua",
+    "type": "cream",
+    "price": 5000,
+    "stock": 90,
+    "desc": "Thom dua tu nhien, vi sua diu nhe.",
+    "image": "img/kemsuadua.jpg",
+    "alt": "Kem que sua dua",
+    "paused": false
+  },
+  {
+    "id": "kem-que-bap",
+    "name": "Kem Que Bap",
+    "type": "cream",
+    "price": 3000,
+    "stock": 80,
+    "desc": "Mui bap non, hau vi ngot thanh.",
+    "image": "img/kembap.jpg",
+    "alt": "Kem que bap",
+    "paused": false
+  },
+  {
+    "id": "kem-chuoi",
+    "name": "Kem Chuoi",
+    "type": "cream",
+    "price": 4000,
+    "stock": 0,
+    "desc": "Vi chuoi chin thom, ngot diu va mat lanh.",
+    "image": "img/kemchuoi.jpg",
+    "alt": "Kem chuoi",
+    "paused": false
+  },
+  {
+    "id": "kem-ly-vani",
+    "name": "Kem Ly Vani",
+    "type": "cup",
+    "price": 3000,
+    "stock": 65,
+    "desc": "Vani co dien, min va thom nhe.",
+    "image": "img/kemlyvani.jpg",
+    "alt": "Kem ly vani",
+    "paused": false
+  },
+  {
+    "id": "kem-ly-sau-rieng",
+    "name": "Kem Ly Sau Rieng",
+    "type": "cup",
+    "price": 3000,
+    "stock": 50,
+    "desc": "Dam mui sau rieng chin, beo muot.",
+    "image": "img/kemlysaurieng.jpg",
+    "alt": "Kem ly sau rieng",
+    "paused": false
+  },
+  {
+    "id": "kem-ly-socola",
+    "name": "Kem Ly Socola",
+    "type": "cup",
+    "price": 3000,
+    "stock": 70,
+    "desc": "Socola dam vi, can bang do ngot.",
+    "image": "img/kemlysocola.jpg",
+    "alt": "Kem ly socola",
+    "paused": false
+  },
+  {
+    "id": "kem-ly-dau",
+    "name": "Kem Ly Dau",
+    "type": "cup",
+    "price": 3000,
+    "stock": 55,
+    "desc": "Vi dau tuoi, thom va chua nhe.",
+    "image": "img/kemlydauda.jpg",
+    "alt": "Kem ly dau",
+    "paused": false
+  },
+  {
+    "id": "kem-ly-socola-cao-cap",
+    "name": "Kem Ly Socola Cao Cap",
+    "type": "premium-cup",
+    "price": 5000,
+    "stock": 40,
+    "desc": "Blend cacao premium, dam va muot.",
+    "image": "img/kemlysocoladacbiet.jpg",
+    "alt": "Kem ly socola cao cap",
+    "paused": false
+  },
+  {
+    "id": "kem-ly-dau-cao-cap",
+    "name": "Kem Ly Dau Cao Cap",
+    "type": "premium-cup",
+    "price": 5000,
+    "stock": 35,
+    "desc": "Dau nguyen qua xay lanh, vi tuoi ro.",
+    "image": "img/kemlydaudacbiet.jpg",
+    "alt": "Kem ly dau cao cap",
+    "paused": false
+  },
+  {
+    "id": "yaourt-truyen-thong",
+    "name": "Yaourt Truyen Thong",
+    "type": "yogurt",
+    "price": 3000,
+    "stock": 75,
+    "desc": "Chua nhe, min, an mat va de chiu.",
+    "image": "img/yaouourt.jpg",
+    "alt": "Yaourt truyen thong",
+    "paused": false
+  },
+  {
+    "id": "da-dau-truyen-thong",
+    "name": "Da Dau Truyen Thong",
+    "type": "bean-dessert",
+    "price": 3000,
+    "stock": 40,
+    "desc": "Dau mem, nuoc cot beo, mat lanh.",
+    "image": "img/dadau.jpg",
+    "alt": "Da dau truyen thong",
+    "paused": false
+  }
+]
