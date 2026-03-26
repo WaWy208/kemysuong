@@ -1,6 +1,6 @@
-s'
-XƯ _+l $^%DLore
-dist
-_5/5 vcx..
- build
-.vercel
+node_modules/
+.vercel/
+coverage/
+*.log
+.env
+.env.*

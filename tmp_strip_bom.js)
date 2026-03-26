@@ -1,1 +1,0 @@
-fs.writeFileSync('package.json', text, 'utf8');

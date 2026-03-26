@@ -1,2 +1,0 @@
-fs.writeFileSync(path, text, 'utf8');
-fs.writeFileSync(path, text, 'utf8');

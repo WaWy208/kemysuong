@@ -1,10 +1,7 @@
-(function () {
+﻿(function () {
 const currency = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 const ADMIN_PASSWORD = 'buiquangquy25122007';
 const MENU_OVERRIDE_KEY = 'kem-y-suong-menu-overrides';
-const API_BASE_URL = 'http://localhost:4000/api/v1'; // Change for production
-
-let pendingMenuChanges = new Map(); // Track unsaved changes
 const MOCK_PAGE_SIZE = 8;
 const MENU_TYPE_LABELS = {
   cream: 'Kem que',
@@ -48,24 +45,10 @@ function getMenuItems() {
 }
 
 async function getMenuOverrides() {
-  // Try server first, fallback localStorage
-  try {
-    const response = await fetch(`${API_BASE_URL}/menu/overrides`);
-    if (response.ok) {
-      const data = await response.json();
-      const map = new Map(data.map(item => [String(item.productId), item]));
-      localStorage.setItem(MENU_OVERRIDE_KEY, JSON.stringify(Object.fromEntries(map)));
-      return Object.fromEntries(map);
-    }
-  } catch (error) {
-    console.warn('Server overrides unavailable, using localStorage:', error);
-  }
-  
-  // Fallback
   try {
     const raw = window.localStorage.getItem(MENU_OVERRIDE_KEY);
     return raw ? JSON.parse(raw) : {};
-  } catch {
+  } catch (_error) {
     return {};
   }
 }
@@ -78,8 +61,12 @@ function saveMenuOverrides(overrides) {
   }
 }
 
-const AUTO_SAVE_DELAY = 800;
-let autoSaveTimer = null;
+function syncSaveButton(label = 'Tự động lưu') {
+  const saveBtn = document.getElementById('adminMenuSaveBtn');
+  if (!saveBtn) return;
+  saveBtn.disabled = true;
+  saveBtn.textContent = label;
+}
 
 function normalizeStock(value) {
   const next = Number(value);
@@ -88,72 +75,12 @@ function normalizeStock(value) {
 }
 
 async function updateMenuOverride(itemId, patch) {
-  pendingMenuChanges.set(itemId, { ...pendingMenuChanges.get(itemId), ...patch });
-  updateSaveButtonState();
-  
-  // Still save locally as fallback
   const overrides = await getMenuOverrides();
   overrides[itemId] = { ...overrides[itemId], ...patch };
   saveMenuOverrides(overrides);
   window.dispatchEvent(new CustomEvent('menu:updated'));
-
-  setAdminMenuMessage('Đã cập nhật tạm (chưa lưu server)', 'info');
-  scheduleAutoSave();
-}
-
-function scheduleAutoSave() {
-  if (pendingMenuChanges.size === 0) return;
-  if (autoSaveTimer) {
-    clearTimeout(autoSaveTimer);
-  }
-  autoSaveTimer = window.setTimeout(() => {
-    saveMenuToServer().catch(() => {});
-  }, AUTO_SAVE_DELAY);
-}
-
-function updateSaveButtonState() {
-  const saveBtn = document.getElementById('adminMenuSaveBtn');
-  if (saveBtn) {
-    const hasChanges = pendingMenuChanges.size > 0;
-    saveBtn.disabled = !hasChanges;
-    saveBtn.textContent = hasChanges ? 'Lưu lên Server (' + pendingMenuChanges.size + ')' : 'Đã lưu server';
-  }
-}
-
-async function saveMenuToServer() {
-  if (pendingMenuChanges.size === 0) return;
-  
-  setAdminMenuMessage('Đang lưu lên server...', 'ok');
-  
-  try {
-    const updates = Array.from(pendingMenuChanges.values());
-    const response = await fetch(`${API_BASE_URL}/menu`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Admin-Password': ADMIN_PASSWORD
-      },
-      body: JSON.stringify(updates)
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Lưu thất bại');
-    }
-    
-    const result = await response.json();
-    pendingMenuChanges.clear();
-    updateSaveButtonState();
-    
-    // Reload from server
-    await getMenuOverrides();
-    await renderAdminMenu();
-    window.dispatchEvent(new CustomEvent('menu:updated'));
-    
-    setAdminMenuMessage(`Đã lưu thành công ${result.updated || updates.length} mục!`, 'ok');
-  } catch (error) {
-    setAdminMenuMessage('Lưu server thất bại: ' + error.message, 'err');
-  }
+  syncSaveButton('Đã lưu');
+  setAdminMenuMessage('Đã lưu thay đổi trên trình duyệt này.', 'ok');
 }
 
 async function renderAdminMenu() {
@@ -522,37 +449,15 @@ async function bindAdminPanel() {
 
     if (menuResetBtn) {
       menuResetBtn.addEventListener('click', async () => {
-        try {
-          // Clear server too
-          await fetch(`${API_BASE_URL}/menu`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'X-Admin-Password': ADMIN_PASSWORD
-            },
-            body: JSON.stringify([])
-          });
-          saveMenuOverrides({});
-          pendingMenuChanges.clear();
-          renderAdminMenu();
-          window.dispatchEvent(new CustomEvent('menu:updated'));
-          setAdminMenuMessage('Đã khôi phục mặc định (server + local).', 'ok');
-        } catch (error) {
-          setAdminMenuMessage('Reset local thành công (server offline).', 'ok');
-          saveMenuOverrides({});
-          pendingMenuChanges.clear();
-          renderAdminMenu();
-          window.dispatchEvent(new CustomEvent('menu:updated'));
-        }
+        saveMenuOverrides({});
+        await renderAdminMenu();
+        window.dispatchEvent(new CustomEvent('menu:updated'));
+        syncSaveButton('Đã lưu');
+        setAdminMenuMessage('Đã khôi phục mặc định trên trình duyệt này.', 'ok');
       });
     }
 
-    const saveBtn = document.getElementById('adminMenuSaveBtn');
-    if (saveBtn) {
-      saveBtn.addEventListener('click', saveMenuToServer);
-    }
-
-    updateSaveButtonState();
+    syncSaveButton();
     await renderAdminMenu(); // Await for async overrides
   }
 }
@@ -613,3 +518,4 @@ if (document.readyState === 'loading') {
   bindAdminGate();
 }
 })();
+
